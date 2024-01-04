@@ -69,6 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
+      url = "https://lunx.maccms.xyz/v.php?f=b053313cc87f4a985d92ea1de7ef4201.m3u8";
       _counter++;
       // _controller.value.isPlaying ? _controller.pause() : _controller.play();
     });
@@ -93,6 +94,9 @@ class _MyHomePageState extends State<MyHomePage> {
     //             .value.size.height} error:$s");
     //   });
   }
+
+  var url =
+      'https://lunx.maccms.xyz/v.php?f=1f0a729e483ce2611abad1c4adbe0531.m3u8';
 
   @override
   Widget build(BuildContext context) {
@@ -139,8 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const YoYoPlayer(
-              url:
-                  'https://lunx.maccms.xyz/v.php?f=1f0a729e483ce2611abad1c4adbe0531.m3u8',
+              url: "https://lunx.maccms.xyz/v.php?f=d9c0a384dc05e51b04da0d5870328f83.m3u8",
               // 'https://sfux-ext.sfux.info/hls/chapter/105/1588724110/1588724110.m3u8',
               // videoStyle: const VideoStyle(
               //   qualityStyle: TextStyle(

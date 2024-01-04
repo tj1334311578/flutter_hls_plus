@@ -268,9 +268,7 @@ class _YoYoPlayerState extends State<YoYoPlayer>
     WidgetsBinding.instance.addPostFrameCallback((callback) {
       WidgetsBinding.instance.addPersistentFrameCallback((callback) {
         if (!mounted) return;
-        var orientation = MediaQuery
-            .of(context)
-            .orientation;
+        var orientation = MediaQuery.of(context).orientation;
         bool? fullScr;
 
         if (orientation == Orientation.landscape) {
@@ -333,33 +331,30 @@ class _YoYoPlayerState extends State<YoYoPlayer>
   Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: fullScreen
-          ? MediaQuery
-          .of(context)
-          .size
-          .calculateAspectRatio()
+          ? MediaQuery.of(context).size.calculateAspectRatio()
           : widget.aspectRatio,
       child: controller.value.isInitialized
           ? Stack(
-        children: <Widget>[
-          GestureDetector(
-            onTap: () {
-              toggleControls();
-              removeOverlay();
-            },
-            onDoubleTap: () {
-              togglePlay();
-              removeOverlay();
-            },
-            child: Center(
-              child: AspectRatio(
-                aspectRatio: controller.value.aspectRatio,
-                child: VideoPlayer(controller),
-              ),
-            ),
-          ),
-          ...videoBuiltInChildren(),
-        ],
-      )
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () {
+                    toggleControls();
+                    removeOverlay();
+                  },
+                  onDoubleTap: () {
+                    togglePlay();
+                    removeOverlay();
+                  },
+                  child: Center(
+                    child: AspectRatio(
+                      aspectRatio: controller.value.aspectRatio,
+                      child: VideoPlayer(controller),
+                    ),
+                  ),
+                ),
+                ...videoBuiltInChildren(),
+              ],
+            )
           : VideoLoading(loadingStyle: widget.videoLoadingStyle),
     );
   }
@@ -380,10 +375,7 @@ class _YoYoPlayerState extends State<YoYoPlayer>
       child: Align(
         alignment: Alignment.topCenter,
         child: Container(
-          width: MediaQuery
-              .of(context)
-              .size
-              .width,
+          width: MediaQuery.of(context).size.width,
           padding: widget.videoStyle.actionBarPadding ??
               const EdgeInsets.symmetric(
                 horizontal: 8.0,
@@ -505,7 +497,7 @@ class _YoYoPlayerState extends State<YoYoPlayer>
   /// Video quality list
   Widget m3u8List() {
     RenderBox? renderBox =
-    videoQualityKey.currentContext?.findRenderObject() as RenderBox?;
+        videoQualityKey.currentContext?.findRenderObject() as RenderBox?;
     var offset = renderBox?.localToGlobal(Offset.zero);
 
     return VideoQualityPicker(
@@ -521,8 +513,7 @@ class _YoYoPlayerState extends State<YoYoPlayer>
           });
           onSelectQuality(data);
           print(
-              "--- Quality select ---\nquality : ${data
-                  .dataQuality}\nlink : ${data.dataURL}");
+              "--- Quality select ---\nquality : ${data.dataQuality}\nlink : ${data.dataURL}");
         }
         setState(() {
           m3u8Show = false;
@@ -613,7 +604,9 @@ class _YoYoPlayerState extends State<YoYoPlayer>
         getM3U8(url);
       } else {
         print("urlEnd: null");
-        if (uri.toString().endsWith("m3u8")) {
+        /// 解决其他问题
+        if (uri.toString().startsWith('http') &&
+            uri.toString().endsWith("m3u8")) {
           setState(() {
             playType = "HLS";
           });
@@ -666,7 +659,7 @@ class _YoYoPlayerState extends State<YoYoPlayer>
 
     if (m3u8Content == null && videoUrl != null) {
       http.Response response =
-      await http.get(Uri.parse(videoUrl), headers: widget.headers);
+          await http.get(Uri.parse(videoUrl), headers: widget.headers);
       if (response.statusCode == 200) {
         m3u8Content = utf8.decode(response.bodyBytes);
 
@@ -674,12 +667,11 @@ class _YoYoPlayerState extends State<YoYoPlayer>
         int index = 0;
 
         List<RegExpMatch> matches =
-        regExp.allMatches(m3u8Content ?? '').toList();
+            regExp.allMatches(m3u8Content ?? '').toList();
         // List<RegExpMatch> audioMatches =
         //     regExpAudio.allMatches(m3u8Content ?? '').toList();
         print(
-            "--- HLS Data ----\n$m3u8Content \nTotal length: ${yoyo
-                .length} \nFinish!!!");
+            "--- HLS Data ----\n$m3u8Content \nTotal length: ${yoyo.length} \nFinish!!!");
 
         for (RegExpMatch regExpMatch in matches) {
           String quality = (regExpMatch.group(1)).toString();
@@ -693,8 +685,7 @@ class _YoYoPlayerState extends State<YoYoPlayer>
             url = sourceURL;
           } else {
             print(
-                'Match: ${match?.pattern} --- ${match?.groupNames} --- ${match
-                    ?.input}');
+                'Match: ${match?.pattern} --- ${match?.groupNames} --- ${match?.input}');
             final dataURL = match?.group(0);
             url = "$dataURL$sourceURL";
             print("--- HLS child url integration ---\nChild url :$url");
@@ -707,8 +698,7 @@ class _YoYoPlayerState extends State<YoYoPlayer>
 
             if (!isNetwork) {
               print(
-                  'Match: ${match?.pattern} --- ${match?.groupNames} --- ${match
-                      ?.input}');
+                  'Match: ${match?.pattern} --- ${match?.groupNames} --- ${match?.input}');
               final auDataURL = match!.group(0);
               auURL = "$auDataURL$audioURL";
               print("Url network audio  $url $audioURL");
@@ -722,7 +712,7 @@ class _YoYoPlayerState extends State<YoYoPlayer>
           print("-- Audio ---\nAudio list length: ${audio.length}");
           if (audioList.isNotEmpty) {
             audio =
-            """#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="audio-medium",NAME="audio",AUTOSELECT=YES,DEFAULT=YES,CHANNELS="2",
+                """#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="audio-medium",NAME="audio",AUTOSELECT=YES,DEFAULT=YES,CHANNELS="2",
                   URI="${audioList.last.url}"\n""";
           } else {
             audio = "";
@@ -732,7 +722,7 @@ class _YoYoPlayerState extends State<YoYoPlayer>
             try {
               var file = await FileUtils.cacheFileUsingWriteAsString(
                 contents:
-                """#EXTM3U\n#EXT-X-INDEPENDENT-SEGMENTS\n$audio#EXT-X-STREAM-INF:CLOSED-CAPTIONS=NONE,BANDWIDTH=1469712,
+                    """#EXTM3U\n#EXT-X-INDEPENDENT-SEGMENTS\n$audio#EXT-X-STREAM-INF:CLOSED-CAPTIONS=NONE,BANDWIDTH=1469712,
                   RESOLUTION=$quality,FRAME-RATE=30.000\n$url""",
                 quality: quality,
                 videoUrl: url,
@@ -759,9 +749,7 @@ class _YoYoPlayerState extends State<YoYoPlayer>
         M3U8s m3u8s = M3U8s(m3u8s: yoyo);
 
         print(
-            "--- m3u8 File write --- ${yoyo.map((e) =>
-            e.dataQuality == e.dataURL).toList()} --- length : ${yoyo
-                .length} --- Success");
+            "--- m3u8 File write --- ${yoyo.map((e) => e.dataQuality == e.dataURL).toList()} --- length : ${yoyo.length} --- Success");
         return m3u8s;
       }
     }
@@ -895,8 +883,7 @@ class _YoYoPlayerState extends State<YoYoPlayer>
           httpHeaders: widget.headers ?? const <String, String>{},
           closedCaptionFile: widget.closedCaptionFile,
           videoPlayerOptions: widget.videoPlayerOptions,
-        )
-          ..initialize().then((value) => seekToLastPlayingPosition);
+        )..initialize().then((value) => seekToLastPlayingPosition);
       } else if (playType == "MKV") {
         controller = VideoPlayerController.networkUrl(
           Uri.parse(url!),
@@ -904,8 +891,7 @@ class _YoYoPlayerState extends State<YoYoPlayer>
           httpHeaders: widget.headers ?? const <String, String>{},
           closedCaptionFile: widget.closedCaptionFile,
           videoPlayerOptions: widget.videoPlayerOptions,
-        )
-          ..initialize().then((value) => seekToLastPlayingPosition);
+        )..initialize().then((value) => seekToLastPlayingPosition);
       } else if (playType == "HLS") {
         controller = VideoPlayerController.networkUrl(
           Uri.parse(url!),
@@ -913,8 +899,7 @@ class _YoYoPlayerState extends State<YoYoPlayer>
           httpHeaders: widget.headers ?? const <String, String>{},
           closedCaptionFile: widget.closedCaptionFile,
           videoPlayerOptions: widget.videoPlayerOptions,
-        )
-          ..initialize().then((_) {
+        )..initialize().then((_) {
             setState(() => hasInitError = false);
             seekToLastPlayingPosition();
           }).catchError((e) {
@@ -928,8 +913,7 @@ class _YoYoPlayerState extends State<YoYoPlayer>
         File(url!),
         closedCaptionFile: widget.closedCaptionFile,
         videoPlayerOptions: widget.videoPlayerOptions,
-      )
-        ..initialize().then((value) {
+      )..initialize().then((value) {
           setState(() => hasInitError = false);
           seekToLastPlayingPosition();
         }).catchError((e) {
@@ -940,9 +924,7 @@ class _YoYoPlayerState extends State<YoYoPlayer>
 
   void _navigateLocally(context) async {
     if (!fullScreen) {
-      if (ModalRoute
-          .of(context)
-          ?.willHandlePopInternally ?? false) {
+      if (ModalRoute.of(context)?.willHandlePopInternally ?? false) {
         Navigator.of(context).pop();
       }
       return;
@@ -995,8 +977,7 @@ class _YoYoPlayerState extends State<YoYoPlayer>
       Uri.parse(url),
       closedCaptionFile: widget.closedCaptionFile,
       videoPlayerOptions: widget.videoPlayerOptions,
-    )
-      ..initialize().then((_) {
+    )..initialize().then((_) {
         setState(() => hasInitError = false);
         seekToLastPlayingPosition();
         controller.play();
